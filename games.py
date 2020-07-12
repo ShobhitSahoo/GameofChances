@@ -1,68 +1,78 @@
 import random
+from time import sleep
 
 money = int(input('Enter your available balance->'))
 # 3
-
+bet_amt = 0
 
 def bet():
-    user_input = int(
-        input('Enter the amount you want too bet within your available balance->'))
+    user_input = int(input('Enter the amount you want too bet within your available balance->'))
     if(user_input > money):
         bet()
     else:
         return user_input
 
-
 print('Available balance is ${}'.format(money))
-# 3
+
 bet_amt = bet()
 
 print('The entered bet amount is ${}'.format(bet_amt))
 print('The balance left with you is ${}'.format(money-bet_amt))
 # ----------------------------------------------------------------
 
-
-def left_amt(amt):
-    print("Your balance after playing ${}".format(amt))
-
-
-'''    if amt <= 0:
+def left_amt():
+    global money
+    money += bet_amt
+    print("Finally You have ", money)
+''' if amt <= 0:
         print('You have no balance left to play')
     else:
         print('The available bet balance is ${}'.format(amt))
 '''
 # ------------------------------------------------------------------
 
+def updateBal(amt, updation):
+    # If lost then subtract the amt from bet_amt
+    # If won then add the amt from bet_amt
+    global bet_amt
+    if updation == '+':
+        bet_amt += amt;
+    elif updation == '-':
+        bet_amt -= amt;
+    print("Currently your Bet Amount is ", bet_amt)
+    print('\n')
+
 
 def rand(l, h):
     result = random.randint(l, h)
     return result
+"""1 for Heads 
+2 for Tails"""
 
 # Game 1=================================================================
-
 
 def flipping_a_coin():
     print("Lets flip a coin")
     user_value = input("Enter your choice(Heads or Tails)->")
     user_value = user_value.title()
-    print('Your guessed-->', user_value)
+    print('You guessed-->', user_value)
     result = rand(1, 2)
-    if(user_value == "Heads" and result == 1)or (user_value == "Tails" and result == 0):
+    if(user_value == "Heads" and result == 1) or (user_value == "Tails" and result == 2):
         fbet = 100
         print("You won ${}".format(fbet))
-        return fbet
+        #return fbet
+        updateBal(fbet, '+')
 
     else:
         fbet = 100
-        print("You lost ${}".format(100))
-        return fbet
+        print("You lost ${}".format(fbet))
+        updateBal(fbet, '-')
+        #return fbet
 
 # Game 2-> 4444444444444444444444444444444444444444444444444444444444444444444444444
 
-
 def roll_two_die():
     print('----------------------------------------------')
-    print()
     print('Lets play Cho-Han!')
     dice1 = rand(1, 6)
     dice2 = rand(1, 6)
@@ -74,107 +84,108 @@ def roll_two_die():
         dbet = 200
         print("You won ${}".format(dbet))
         print('----------------------------------------------')
-        print()
-        return dbet
-    elif (guess == "Odd") and total % 2 == 0:
+        updateBal(dbet, '+')
+
+    elif (guess == "Odd") and total % 2 != 0:
         dbet = 200
-        print("You won ${}".format())
+        print("You won ${}".format(dbet))
         print('----------------------------------------------')
-        print()
-        return dbet
+        updateBal(dbet, '+')
+
     else:
-        dbet = -200
+        dbet = 200
         print("You lost ${}".format(200))
         print('----------------------------------------------')
-        print()
-        return dbet
+        updateBal(dbet, '-')
 
 # Game 3->$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
-
 def play_cards():
     print('----------------------------------------------')
-    print()
-    print("Lets play a game of Crds")
+    print("Lets play a game of Cards")
     mine = rand(1, 10)
+    sleep(1)
     theirs = rand(1, 10)
+    sleep(1)
     if mine > theirs:
         pbet = 250
         print("You won {}".format(250))
+        print("Your card was " + str(mine) + ". Their card was "+ str(theirs))
         print("------------------------------------------")
-        return pbet
+        updateBal(pbet, '+')
     elif mine < theirs:
-        pbet = -250
+        pbet = 250
         print("You lost {}".format(250))
-        return pbet
+        print("Your card was " + str(mine) + ". Their card was "+ str(theirs))
+        print("------------------------------------------")
+        updateBal(pbet, '-')
 
     else:
         print("It was a tie!")
-        print("------------------")
-        return 0
+        print("-------------------------------------------")
 
-# Game 5->^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
+# Game 4->^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 def roulette():
     print('----------------------------------------------')
-    print()
     print("Lets play Roulette")
     guess = input("Enter your choice(Even or Odd)->")
     guess = guess.title()
     result = rand(0, 37)
+
     if result == 37:
         print("The wheel landed on 00")
     else:
         print("The wheel landed on {}".format(result))
+
     if guess == "Even" and result % 2 == 0 and result != 0:
-        pbet = bet_amt*35
+        rbet = bet_amt * 3
         print("{} is an even number.".format(result))
-        print("You won {} $".format(pbet))
+        print("You won {} $".format(rbet))
         print('----------------------------------------------')
-        return pbet
+        updateBal(rbet, '+')
+
     elif guess == "Odd" and result % 2 != 0 and result != 37:
-        pbet = bet_amt*35
+        rbet = bet_amt * 3
         print("{} is an odd number.".format(result))
-        print("You won {} $".format(pbet))
+        print("You won {} $".format(rbet))
         print('----------------------------------------------')
-        return pbet
+        updateBal(rbet, '+')
+
     else:
-        pbet = bet_amt-300
-        print("You lost ${} ".format(300))
+        rbet = bet_amt-300
+        print("You lost ${} ".format(rbet))
         print('----------------------------------------------')
-        return pbet
+        updateBal(rbet, '-')
 # 888888888888888888888888888888888888888888888888888888888888888888888
 
-
 bal = 0
-
 
 def games(user_input):
 
     if user_input == 1:
-        f = flipping_a_coin()
-        bet_amt += f
+        flipping_a_coin()
         user_input = int(input("Enter your choice--->"))
         games(user_input)
+
     elif user_input == 2:
-        r = roll_two_die()
-        bet_amt += r
+        roll_two_die()
         user_input = int(input("Enter your choice--->"))
         games(user_input)
+
     elif user_input == 3:
-        p = play_cards()
-        bet_amt += p
+        play_cards()
         user_input = int(input("Enter your choice--->"))
         games(user_input)
+
     elif user_input == 4:
-        ro = roulette()
-        bet_amt += ro
+        roulette()
         user_input = int(input("Enter your choice--->"))
         games(user_input)
+
     elif user_input == 0:
         print('Thank you for playing!!!!')
-        print(bet_amt)
+        left_amt()
 
     else:
         user = int(input('Enter a valid choice-->'))
@@ -182,19 +193,19 @@ def games(user_input):
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-
 def user_choice_message():
     message = '''
     The list of games are :
+    0.TO exit the game
     1.Flipping a coin
     2.Roll two die
-    3.Roulette
-    4.Play Cards
+    3.Play Cards
+    4.Roulette
     '''
     print(message)
 
     user_input = int(input("Enter your choice--->"))
     games(user_input)
 
-
 user_choice_message()
+
